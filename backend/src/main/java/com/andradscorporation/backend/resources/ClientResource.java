@@ -1,6 +1,8 @@
 package com.andradscorporation.backend.resources;
 
 import com.andradscorporation.backend.entities.Client;
+import com.andradscorporation.backend.services.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +16,12 @@ import java.util.List;
 @RequestMapping(value = "/clients")
 public class ClientResource {
 
+    @Autowired
+    private ClientService service;
+
     @GetMapping
     public ResponseEntity<List<Client>> findAll(){
-        List<Client> clients = new ArrayList<>();
-        Instant birthDate = Instant.now();
-        clients.add(new Client(1L, "Maria Silva", "123654789", 3000.00, birthDate, 2));
-        clients.add(new Client(2L, "João Barros", "741258963", 5000.00, birthDate, 0));
+        List<Client> clients = service.findAll();
         return ResponseEntity.ok().body(clients);
     }
 
