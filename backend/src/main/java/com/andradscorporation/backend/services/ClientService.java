@@ -3,6 +3,7 @@ package com.andradscorporation.backend.services;
 import com.andradscorporation.backend.dto.ClientDTO;
 import com.andradscorporation.backend.entities.Client;
 import com.andradscorporation.backend.repositories.ClientRepository;
+import com.andradscorporation.backend.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class ClientService {
     @Transactional(readOnly = true)
     public ClientDTO findById(Long id) {
         Optional<Client> clientObj = repository.findById(id);
-        Client clientEntity = clientObj.get();
+        Client clientEntity = clientObj.orElseThrow(() -> new ResourceNotFoundException("Client not found"));
         return new ClientDTO(clientEntity);
     }
 }
