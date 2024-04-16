@@ -6,10 +6,10 @@ import com.andradscorporation.backend.repositories.ClientRepository;
 import com.andradscorporation.backend.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,6 +54,14 @@ public class ClientService {
         }
     }
 
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new ResourceNotFoundException("Id not found: " + id);
+        }
+    }
+
     private void copyDtoToEntity(ClientDTO clientDTO, Client clientEntity) {
         clientEntity.setName(clientDTO.getName());
         clientEntity.setCpf(clientDTO.getCpf());
@@ -61,5 +69,4 @@ public class ClientService {
         clientEntity.setBirthDate(clientDTO.getBirthDate());
         clientEntity.setChildren(clientDTO.getChildren());
     }
-
 }
