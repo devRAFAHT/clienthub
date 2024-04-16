@@ -4,10 +4,12 @@ import com.andradscorporation.backend.dto.ClientDTO;
 import com.andradscorporation.backend.entities.Client;
 import com.andradscorporation.backend.repositories.ClientRepository;
 import com.andradscorporation.backend.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +42,18 @@ public class ClientService {
         return new ClientDTO(clientEntity);
     }
 
+    @Transactional
+    public ClientDTO update(Long id, ClientDTO clientDTO) {
+        try {
+            Client clientEntity = repository.getOne(id);
+            copyDtoToEntity(clientDTO, clientEntity);
+            repository.save(clientEntity);
+            return new ClientDTO(clientEntity);
+        } catch(EntityNotFoundException e){
+            throw new ResourceNotFoundException("Id not found: " + id);
+        }
+    }
+
     private void copyDtoToEntity(ClientDTO clientDTO, Client clientEntity) {
         clientEntity.setName(clientDTO.getName());
         clientEntity.setCpf(clientDTO.getCpf());
@@ -47,4 +61,5 @@ public class ClientService {
         clientEntity.setBirthDate(clientDTO.getBirthDate());
         clientEntity.setChildren(clientDTO.getChildren());
     }
+
 }
